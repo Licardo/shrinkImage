@@ -1,0 +1,25 @@
+plugins {
+    id 'java-library'
+    id 'groovy'
+    id 'maven'
+}
+
+dependencies {
+    implementation gradleApi()
+    implementation localGroovy()
+    implementation 'com.android.tools.build:gradle:3.3.2'
+    api files("$rootDir/shrinkPlugin/rt.jar")
+}
+
+uploadArchives {
+    repositories {
+        mavenDeployer {
+            //设置插件的GAV参数
+            pom.groupId = 'com.ichoice.plugin'
+            pom.artifactId = 'shrink'
+            pom.version = '0.0.1'
+            //文件发布到下面目录
+            repository(url: uri('../repo'))
+        }
+    }
+}
