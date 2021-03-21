@@ -90,6 +90,12 @@ wmShrink {
 }
 ```
 
+#### 注意
+
+shrinkPlugin插件中对图片的处理是用的jre中javax包的ImageIO类，android工程没有引入ImageIO类。
+
+解决方案：将java的rt.jar包拷贝到插件工程并引入
+
 #### 工具下载地址:
 
 [imageTools](https://github.com/Licardo/shrinkImage/releases/tag/1.0.0)
