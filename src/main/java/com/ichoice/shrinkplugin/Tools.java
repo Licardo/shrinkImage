@@ -1,7 +1,11 @@
 package com.ichoice.shrinkplugin;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import java.io.BufferedReader;
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.InputStreamReader;
 
 public class Tools {
@@ -50,10 +54,14 @@ public class Tools {
         Process process = null;
         try {
             process = Runtime.getRuntime().exec(cmd);
+//            OutputProcessor error = new OutputProcessor(process.getErrorStream());
+//            OutputProcessor input = new OutputProcessor(process.getInputStream());
+//            error.start();
+//            input.start();
             process.waitFor();
         } catch (IOException | InterruptedException e) {
-            e.printStackTrace();
-            LogUtil.log(">>>"+cmd);
+//            e.printStackTrace();
+            LogUtil.log(cmd+"@@@："+e.getMessage());
         }
     }
 
@@ -71,12 +79,37 @@ public class Tools {
         Process process = null;
         try {
             process = Runtime.getRuntime().exec(cmd);
+//            OutputProcessor error = new OutputProcessor(process.getErrorStream());
+//            OutputProcessor input = new OutputProcessor(process.getInputStream());
+//            error.start();
+//            input.start();
             process.waitFor();
             BufferedReader bufferReader = new BufferedReader(new InputStreamReader(process.getInputStream()));
             return bufferReader.readLine();
         } catch (IOException | InterruptedException e) {
             e.printStackTrace();
             return null;
+        }
+    }
+
+    static class OutputProcessor extends Thread {
+        private static final Logger LOGGER = LoggerFactory.getLogger(OutputProcessor.class);
+        private final InputStream inputStream;
+        public OutputProcessor(InputStream inputStream) {
+            this.inputStream = inputStream;
+        }
+        @Override
+        public void run() {
+            try {
+                InputStreamReader isr = new InputStreamReader(inputStream);
+                BufferedReader br = new BufferedReader(isr);
+                String line;
+                while ((line = br.readLine()) != null) {
+                    LOGGER.info("{}", line);
+                }
+            } catch (Exception e) {
+                LOGGER.error("OutputProcessor>>>", e.getMessage(), e);
+            }
         }
     }
 }

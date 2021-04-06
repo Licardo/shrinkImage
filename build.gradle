@@ -14,12 +14,15 @@ dependencies {
 uploadArchives {
     repositories {
         mavenDeployer {
+            repository(url:"http://192.168.1.209:9081/repository/android-maven-releases/") {
+                authentication(userName:"android", password:"ichoice411")
+            }
             //设置插件的GAV参数
             pom.groupId = 'com.ichoice.plugin'
             pom.artifactId = 'shrink'
-            pom.version = '0.0.1'
+            pom.version = '0.0.2'
             //文件发布到下面目录
-            repository(url: uri('../repo'))
+//            repository(url: uri('../repo'))
         }
     }
 }

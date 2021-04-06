@@ -5,6 +5,7 @@ import java.io.File;
 public class FileUtil {
     private static  String rootDir;
     private static String toolDir;
+    private static final String outputDir = "/wm_image";
 
     public static void setRootDir(String rootDir) {
         FileUtil.rootDir = rootDir;
@@ -24,5 +25,9 @@ public class FileUtil {
 
     public static String getToolsDirPath() {
         return rootDir + toolDir;
+    }
+
+    public static String getOutputDir() {
+        return rootDir + outputDir;
     }
 }

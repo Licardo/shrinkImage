@@ -3,7 +3,9 @@ package com.ichoice.shrinkplugin;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.OutputStreamWriter;
 
 import javax.imageio.ImageIO;
 
@@ -21,24 +23,26 @@ public class ImageUtil {
         return file.getName().endsWith(Const.JPG) || file.getName().endsWith(Const.JPEG);
     }
 
-    public static boolean isAlphaPNG(File filePath) {
-        if (filePath.exists()) {
-            BufferedImage img = null;
-            try {
-                img = ImageIO.read(filePath);
-                return img.getColorModel().hasAlpha();
-            } catch (IOException e) {
-                e.printStackTrace();
-                return false;
-            }
+    /**
+     *
+     * @param filePath
+     * @return 0: 不支持alpha通道；1：支持alpha通道；2：异常
+     */
+    public static int isAlphaPNG(File filePath) {
+        BufferedImage img;
+        try {
+            img = ImageIO.read(filePath);
+            return img.getColorModel().hasAlpha() ? 1 : 0;
+        } catch (Exception e) {
+            printFile("alphaPNGException.txt", filePath.getAbsolutePath());
+            return 2;
         }
-        return false;
     }
 
     public static boolean isBigSizeImage(File imgFile, float largeSize) {
-        if (isImage(imgFile)) {
+        if (isImage(imgFile) || imgFile.getName().endsWith(Const.WEBP)) {
             if (imgFile.length() >= largeSize) {
-                LogUtil.log(SIZE_TAG, imgFile.getPath(), String.valueOf(true));
+                LogUtil.log(SIZE_TAG, imgFile.getPath(), String.valueOf(imgFile.length()));
                 return true;
             }
         }
@@ -46,6 +50,7 @@ public class ImageUtil {
     }
 
     public static boolean isBigPixelImage(File imgFile, int largeWidth, int largeHeight) {
+        // ImageIO无法读取webp图片的宽高
         if (isImage(imgFile)) {
             BufferedImage sourceImg = null;
             try {
@@ -59,5 +64,27 @@ public class ImageUtil {
             }
         }
         return false;
+    }
+
+    /**
+     * 输出到文件
+     * @param fileName
+     * @param line
+     */
+    private static void printFile(String fileName, String line) {
+        File f = new File(FileUtil.getOutputDir()+"/"+fileName);
+        try {
+            if (!f.exists()) {
+                f.createNewFile();
+            }
+            FileOutputStream fileOutputStream = new FileOutputStream(f);
+            OutputStreamWriter writer = new OutputStreamWriter(fileOutputStream);
+            writer.append(line).append("\n");
+            writer.close();
+            fileOutputStream.close();
+        } catch (IOException e) {
+            e.printStackTrace();
+
+        }
     }
 }

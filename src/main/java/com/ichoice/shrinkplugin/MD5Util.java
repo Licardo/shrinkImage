@@ -23,10 +23,9 @@ public class MD5Util {
         }
     }
 
-    public static String getFileMD5String(File file){
+    public static String getFileMD5String(File file) throws IOException{
         InputStream fis;
-        try {
-            fis = new FileInputStream(file);
+        fis = new FileInputStream(file);
         byte[] buffer = new byte[1024];
         int numRead = 0;
         while ((numRead = fis.read(buffer)) > 0) {
@@ -34,10 +33,6 @@ public class MD5Util {
         }
         fis.close();
         return bufferToHex(messagedigest.digest());
-        } catch (IOException e) {
-            LogUtil.log(e.getMessage());
-            return "";
-        }
     }
 
     private static String bufferToHex(byte bytes[]) {
